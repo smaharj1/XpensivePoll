@@ -14,12 +14,50 @@ import firebase from "react-native-firebase";
 export default class Homepage extends React.Component {
   constructor() {
     super();
+    this.ref = null;
+    this.unsubscribe = null;
+
+    this.state = {
+        topPolls: []
+    }
+
     this.autoSignIn = this.autoSignIn.bind(this);
   }
 
   async componentDidMount() {
     await this.autoSignIn();
+
+    if(this.state.user){
+        this.ref = firebase.firestore().collection('polls');
+        this.unsubscribe = this.ref.onSnapshot(this.onCollectionUpdate);
+
+    }
   }
+
+    onCollectionUpdate = (querySnapshot) => {
+        let topPolls = [];
+
+        querySnapshot.forEach(doc => {
+            let {description, options, title} = doc.data();
+            topPolls.push({
+                id: doc.id,
+                description,
+                title,
+                options 
+            })
+        });
+
+        this.setState({
+            topPolls
+        })
+
+        console.log("POLLS", topPolls)
+    }
+
+
+    componentWillUnmount() {
+        this.unsubscribe();
+    }
 
   async autoSignIn() {
     try {
