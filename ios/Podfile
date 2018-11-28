@@ -27,4 +27,6 @@ target 'XpensivePoll' do
   pod 'Crashlytics', '~> 3.10.9'
   pod 'GoogleSignIn'
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+
 end
